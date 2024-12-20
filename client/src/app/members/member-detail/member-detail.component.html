@@ -1,0 +1,55 @@
+@if(member){
+    <div class="row">
+        <div class="col-4">
+            <img 
+            src="{{member.PhotoUrl || './assets/user.png'}}" 
+            alt="{{member.KnownAs}}"
+            class="card-img img-thumbnail">
+            <div class="card-body">
+                <div>
+                    <strong>Location:</strong>
+                    <p>{{member.City}}</p>
+                </div>
+                <div>
+                    <strong>Age:</strong>
+                    <p>{{member.Age}}</p>
+                </div>
+                <div>
+                    <strong>Last Active:</strong>
+                    <p>{{member.LastActive}}</p>
+                </div>
+                <div>
+                    <strong>Member since:</strong>
+                    <p>{{member.Created}}</p>
+                </div>                
+            </div>
+            <div class="card-footer">
+                <div class="btn-group d-flex">
+                    <button class="btn btn-primary">Like</button>
+                    <button class="btn btn-success">Message</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-8">
+            <tabset class="member-tabset">
+                <tab heading="About {{member.KnownAs}}">
+                    <h4>Description</h4>
+                    <p>{{member.Introduction}}</p>
+                    <h4>Looking for</h4>
+                    <p>{{member.LookingFor}}</p>
+                </tab>
+                <tab heading="Intrests">
+                    <h4>Intrest</h4>
+                    <p>{{member.Intrests}}</p>
+                </tab>
+                <tab heading="Photos">
+                    <p>Photos goes here</p>
+                </tab>
+                <tab heading="Message">
+                    <p>messages goes here</p>
+                </tab>
+            </tabset>
+        </div>
+    </div>
+}
