@@ -48,8 +48,8 @@
                     <textarea class="form-control" name="LookingFor" [(ngModel)]="member.LookingFor" rows="6">
                     </textarea>
 
-                    <h4 class="mt-2">Intrests</h4>
-                    <textarea class="form-control" name="Intrests" [(ngModel)]="member.Intrests" rows="6">
+                    <h4 class="mt-2">Interests</h4>
+                    <textarea class="form-control" name="Interests" [(ngModel)]="member.Interests" rows="6">
                     </textarea>
 
                     <h4 class="mt-2">Location Details</h4>
@@ -64,9 +64,15 @@
                 </form>
 
             </tab>
-            <tab heading="Intrests">
+            <tab heading="Interests">
                 <h4>Intrest</h4>
-                <p>{{member.Intrests}}</p>
+                <p>{{member.Interests}}</p>
+            </tab>
+            <tab heading="Edit Photos">
+                <app-photo-editor 
+                [member]="member"
+                (memberChange)="onMemberChange($event)">
+                </app-photo-editor>
             </tab>
         </tabset>
     </div>

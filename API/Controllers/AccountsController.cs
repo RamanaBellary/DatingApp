@@ -63,7 +63,7 @@ public class AccountController(DataContext dataContext, ITokenService tokenServi
         return new UserDto
         {
             username = user.UserName,
-            Token = tokenService.CreateToken(user)
+            token = tokenService.CreateToken(user)
         };
     }
 
