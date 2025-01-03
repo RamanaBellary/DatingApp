@@ -4,6 +4,8 @@ import { DecimalPipe, NgClass, NgFor, NgIf, NgStyle } from '@angular/common';
 import { FileUploader, FileUploadModule } from 'ng2-file-upload';
 import { AccountService } from '../../services/account.service';
 import { environment } from '../../../environments/environment';
+import { MembersService } from '../../services/members.service';
+import { Photo } from '../../_models/photo';
 
 @Component({
   selector: 'app-photo-editor',
@@ -14,6 +16,7 @@ import { environment } from '../../../environments/environment';
 })
 export class PhotoEditorComponent implements OnInit {
   private accountService = inject(AccountService);
+  private memberService = inject(MembersService);
   member = input.required<Member>();
   uploader?: FileUploader;
   hasBaseDropZoneOver = false;
@@ -26,6 +29,37 @@ export class PhotoEditorComponent implements OnInit {
 
   fileOverBase(event: any){
     this.hasBaseDropZoneOver = event;
+  }
+
+  deletePhoto(photo: Photo){
+    this.memberService.deletePhoto(photo).subscribe({
+      next: _=>{
+        const updateMember = {...this.member()};
+        updateMember.Photos = updateMember.Photos.filter(p=>p.Id != photo.Id);
+        this.memberChange.emit(updateMember);
+      }
+    })
+  }
+
+  setMainPhoto(photo: Photo){
+    this.memberService.setMainPhoto(photo).subscribe({
+      next: _=>{
+        const user = this.accountService.currentUser();
+        if(user){
+          user.photourl = photo.URL;
+          this.accountService.setCurrentUser(user);
+        }
+
+        const updatedMember = {...this.member()}
+        updatedMember.PhotoUrl = photo.URL;
+        updatedMember.Photos.forEach(p=>{
+          if(p.IsMain) p.IsMain = false;
+          if(p.Id == photo.Id) p.IsMain = true;
+        });
+        
+        this.memberChange.emit(updatedMember);
+      }
+    })
   }
 
   initializeUploader(){
@@ -41,7 +75,7 @@ export class PhotoEditorComponent implements OnInit {
 
     console.log('uploader authoken: ' + this.uploader?.authToken);
 
-    this.uploader.onAfterAddingAll = (file) => {
+    this.uploader.onAfterAddingFile = (file) => {
       file.withCredentials = false;
     }
 
@@ -51,6 +85,22 @@ export class PhotoEditorComponent implements OnInit {
       const updatedMember = {...this.member()};
       updatedMember.Photos.push(photo);
       this.memberChange.emit(updatedMember);
+
+      if(photo.IsMain){
+        const user = this.accountService.currentUser();
+        if(user){
+          user.photourl = photo.URL;
+          this.accountService.setCurrentUser(user);
+        }
+
+        updatedMember.PhotoUrl = photo.URL;
+        updatedMember.Photos.forEach(p=>{
+          if(p.IsMain) p.IsMain = false;
+          if(p.Id == photo.Id) p.IsMain = true;
+        });
+        
+        this.memberChange.emit(updatedMember);
+      }
     }
-  }
+  }  
 }

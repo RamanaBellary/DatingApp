@@ -4,10 +4,11 @@ using API.Controllers;
 using API.Data;
 using API.DTOs;
 using API.Entities;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-public class AccountController(DataContext dataContext, ITokenService tokenService): BaseApiController
+public class AccountController(DataContext dataContext, ITokenService tokenService, IMapper mapper): BaseApiController
 {
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
@@ -16,29 +17,32 @@ public class AccountController(DataContext dataContext, ITokenService tokenServi
         {
             return BadRequest("UserName already exist");
         }
-        return Ok();
-        // using var hmac = new HMACSHA512();
-        // var user = new AppUser
-        // {
-        //     UserName = registerDto.UserName,
-        //     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
-        //     PasswordSalt = hmac.Key
-        // };
-
-        // dataContext.Users.Add(user);
-        // await dataContext.SaveChangesAsync();
         
-        // return new UserDto
-        // {
-        //     username = user.UserName,
-        //     Token = tokenService.CreateToken(user)
-        // };
+        using var hmac = new HMACSHA512();
+
+        var user = mapper.Map<AppUser>(registerDto);
+
+        user.UserName = registerDto.UserName.ToLower();
+        user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password));
+        user.PasswordSalt = hmac.Key;
+
+        dataContext.Users.Add(user);
+        await dataContext.SaveChangesAsync();
+        
+        return new UserDto
+        {
+            username = user.UserName,
+            token = tokenService.CreateToken(user),
+            KnownAs = user.KnownAs
+        };
     }
 
     [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
-        var user = await dataContext.Users.FirstOrDefaultAsync(u=>u.UserName.ToLower() == loginDto.UserName.ToLower());
+        var user = await dataContext.Users
+        .Include(p=>p.Photos)        
+        .FirstOrDefaultAsync(u=>u.UserName.ToLower() == loginDto.UserName.ToLower());
 
         if(user is null)
         {
@@ -63,7 +67,9 @@ public class AccountController(DataContext dataContext, ITokenService tokenServi
         return new UserDto
         {
             username = user.UserName,
-            token = tokenService.CreateToken(user)
+            KnownAs = user.KnownAs,
+            token = tokenService.CreateToken(user),
+            photourl = user.Photos.FirstOrDefault(p=>p.IsMain)?.URL
         };
     }
 

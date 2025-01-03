@@ -43,8 +43,12 @@
                     <h4>Intrest</h4>
                     <p>{{member.Interests}}</p>
                 </tab>
-                <tab heading="Photos">
-                    <p>Photos goes here</p>
+                <tab heading="Photos" #photoTab="tab">
+                    <!-- <p>Photos goes here</p> -->
+                     <gallery
+                     [items]="images"
+                     [itemAutosize]="true"
+                     class="gallery"></gallery>
                 </tab>
                 <tab heading="Message">
                     <p>messages goes here</p>
