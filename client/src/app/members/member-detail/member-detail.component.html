@@ -1,4 +1,4 @@
-@if(member){
+
     <div class="row">
         <div class="col-4">
             <img 
@@ -26,34 +26,37 @@
             <div class="card-footer">
                 <div class="btn-group d-flex">
                     <button class="btn btn-primary">Like</button>
-                    <button class="btn btn-success">Message</button>
+                    <button (click)="selectTab('Messages')" class="btn btn-success">Message</button>
                 </div>
             </div>
         </div>
 
         <div class="col-8">
-            <tabset class="member-tabset">
-                <tab heading="About {{member.KnownAs}}">
+            <tabset class="member-tabset" #memberTabs>
+                <tab heading="About {{member.KnownAs}}" (selectTab)="onTabActivated($event)">
                     <h4>Description</h4>
                     <p>{{member.Introduction}}</p>
                     <h4>Looking for</h4>
                     <p>{{member.LookingFor}}</p>
                 </tab>
-                <tab heading="Interests">
+                <tab heading="Interests" (selectTab)="onTabActivated($event)">
                     <h4>Intrest</h4>
                     <p>{{member.Interests}}</p>
                 </tab>
-                <tab heading="Photos" #photoTab="tab">
+                <tab heading="Photos" #photoTab="tab" (selectTab)="onTabActivated($event)">
                     <!-- <p>Photos goes here</p> -->
                      <gallery
                      [items]="images"
                      [itemAutosize]="true"
                      class="gallery"></gallery>
                 </tab>
-                <tab heading="Message">
-                    <p>messages goes here</p>
+                <tab heading="Messages" (selectTab)="onTabActivated($event)">
+                    <app-member-messages 
+                    [username]="member.UserName" 
+                    [messages]="messages"
+                    (updateMessage)="onUpdateMessages($event)">
+                </app-member-messages>
                 </tab>
             </tabset>
         </div>
     </div>
-}
