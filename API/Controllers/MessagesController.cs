@@ -24,7 +24,7 @@ public class MessagesController(IMessageRepository messageRepository, IUserRepos
         var sender = await userRepository.GetUserByUserNameAsync(username);
         var recipient = await userRepository.GetUserByUserNameAsync(createMessageDto.RecipientUsername);
 
-        if (recipient == null || sender == null) return BadRequest("Message cannot be sent as sender or receiver couldnt be foudn");
+        if (recipient == null || sender == null || sender.UserName == null || recipient.UserName == null) return BadRequest("Message cannot be sent as sender or receiver couldnt be foudn");
 
         var message = new Message
         {
