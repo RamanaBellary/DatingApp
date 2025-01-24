@@ -1,13 +1,13 @@
 export interface Message {
     Id: number
-    SenderId: number
-    SenderUsername: string
-    SenderPhotoUrl: string
-    RecipientId: number
-    RecipientUsername: string
-    RecipientPhotoUrl: string
-    Content: string
-    DateRead?: Date
-    MessageSent: Date
+    senderId: number
+    senderUsername: string
+    senderPhotoUrl: string
+    recipientId: number
+    recipientUsername: string
+    recipientPhotoUrl: string
+    content: string
+    dateRead?: Date
+    messageSent: Date
   }
   

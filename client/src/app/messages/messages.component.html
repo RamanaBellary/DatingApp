@@ -29,18 +29,18 @@
     <tbody class="align-middle">
         @for (message of messageService.paginatedResult()?.items; track message.Id) {
         <tr routerLink="{{getRoute(message)}}" [queryParams]="{tab: 'Messages'}">
-            <td>{{message.Content}}</td>
+            <td>{{message.content}}</td>
             <td>
                 <div>
                     <img [src]="isOutBox ? 
-                        (message.RecipientPhotoUrl || './assets/user.png') : 
-                        (message.SenderPhotoUrl || './assets/user.png')" 
+                        (message.recipientPhotoUrl || './assets/user.png') : 
+                        (message.senderPhotoUrl || './assets/user.png')" 
                         alt="image of user"
                         class="rounded-circle me-2">
-                    <strong>{{isOutBox ? message.RecipientUsername : message.SenderUsername}}</strong>
+                    <strong>{{isOutBox ? message.recipientUsername : message.senderUsername}}</strong>
                 </div>
             </td>
-            <td>{{message.MessageSent | timeago}}</td>
+            <td>{{message.messageSent | timeago}}</td>
             <td (click)="$event.stopPropagation()"><button (click)="deleteMessage(message.Id)" class="btn btn-danger">Delete</button></td>
         </tr>
         }

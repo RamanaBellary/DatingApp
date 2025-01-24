@@ -2,6 +2,7 @@ import { Component, computed, inject, input } from '@angular/core';
 import { Member } from '../../_models/member';
 import { RouterLink } from '@angular/router';
 import { LikesService } from '../../services/likes.service';
+import { PresenceService } from '../../services/presence.service';
 
 @Component({
   selector: 'app-member-card',
@@ -12,16 +13,18 @@ import { LikesService } from '../../services/likes.service';
 })
 export class MemberCardComponent {
   private likeService = inject(LikesService);
+  private presenceServcie = inject(PresenceService);
   member = input.required<Member>();
-  hasLiked = computed(()=>this.likeService.likeIds().includes(this.member().Id));
+  hasLiked = computed(() => this.likeService.likeIds().includes(this.member().Id));
+  isOnline = computed(() => this.presenceServcie.onlineUsers().includes(this.member().UserName));
 
-  toggleLike(){
+  toggleLike() {
     this.likeService.toggleLike(this.member().Id).subscribe({
       next: () => {
-        if(this.hasLiked()){
-          this.likeService.likeIds.update(ids => ids.filter(x=>x != this.member().Id))
+        if (this.hasLiked()) {
+          this.likeService.likeIds.update(ids => ids.filter(x => x != this.member().Id))
         }
-        else{
+        else {
           this.likeService.likeIds.update(ids => [...ids, this.member().Id])
         }
       }

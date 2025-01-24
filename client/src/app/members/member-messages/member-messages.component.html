@@ -1,33 +1,34 @@
 <div class="card">
     <div class="card-body">
-        @if(messages().length ===0){
+        @if(messageService.messageThread().length ===0){
         <p>No message yet</p>
         } @else {
         <ul class="chat">
-            @for (message of messages(); track message.Id) {
-            <li>
-                <div>
-                    <span class="chat-img float-end">
-                        <img src="{{message.SenderPhotoUrl || './assets/user.png'}}" alt="Image of message sender"
-                            class="rounded-circle">
-                    </span>
-                    <div class="chat-body">
-                        <div class="header">
-                            <small class="text-muted">
-                                <span class="fa fa-clock-o">{{message.MessageSent | timeago}}</span>
-                                @if (!message.DateRead && message.SenderUsername !== username()) {
-                                    <span class="text-danger">(unread)</span>
-                                }
-                                @if (message.DateRead && message.SenderUsername !== username()) {
-                                    <span class="text-success">(read {{message.DateRead | timeago}})</span>
-                                }
-                            </small>
+            @for (message of messageService.messageThread(); track message.Id) {
+                <li>
+                    <div>
+                        <span class="chat-img float-end">
+                            <img class="rounded-circle" 
+                            src="{{message.senderPhotoUrl || './assets/user.png'}}" 
+                                alt="Image of message sender"
+                            >
+                        </span>
+                        <div class="chat-body">
+                            <div class="header">
+                                <small class="text-muted">
+                                    <span class="fa fa-clock-o">{{message.messageSent | timeago}}</span>
+                                    @if (!message.dateRead && message.senderUsername !== username()) {
+                                        <span class="text-danger">(unread)</span>
+                                    }
+                                    @if (message.dateRead && message.senderUsername !== username()) {
+                                        <span class="text-success">(read {{message.dateRead | timeago}})</span>
+                                    }
+                                </small>
+                            </div>
+                            <p>{{message.content}}</p>
                         </div>
-                        <p>{{message.Content}}</p>
                     </div>
-                </div>
-            </li>
-
+                </li>
             }
         </ul>
         }

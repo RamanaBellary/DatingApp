@@ -1,30 +1,32 @@
-import { Component, inject, input, OnInit, output, ViewChild } from '@angular/core';
-import { Message } from '../../_models/message';
+import { Component, inject, input, Pipe, ViewChild } from '@angular/core';
 import { MessageService } from '../../services/message.service';
 import { TimeagoModule } from 'ngx-timeago';
 import { FormsModule, NgForm } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+// import { CaseInsensitivePipe } from '../../customPipes/case-insensitive.pipe';
 
 @Component({
   selector: 'app-member-messages',
   standalone: true,
-  imports: [TimeagoModule, FormsModule],
+  imports: [TimeagoModule, FormsModule, CommonModule],
   templateUrl: './member-messages.component.html',
-  styleUrl: './member-messages.component.css'
+  styleUrl: './member-messages.component.css',
+  // providers: [CaseInsensitivePipe]
 })
 export class MemberMessagesComponent {
-  @ViewChild('messageForm') messageForm?: NgForm
+  @ViewChild('messageForm') messageForm?: NgForm;
   messageService = inject(MessageService);
   username = input.required<string>();
-  messages = input.required<Message[]>();
   messageContent = '';
-  updateMessage = output<Message>();
+  // caseInsensitivePipe?: CaseInsensitivePipe;
+
+  // constructor(casePipe: CaseInsensitivePipe){
+  //   this.caseInsensitivePipe = casePipe
+  // }
 
   sendMessage(){
-    this.messageService.sendMessage(this.username(), this.messageContent).subscribe({
-      next: message => {
-        this.updateMessage.emit(message);
-        this.messageForm?.reset();
-      }
+    this.messageService.sendMessage(this.username(), this.messageContent).then(()=>{
+      this.messageForm?.reset();
     })
   }
 }
